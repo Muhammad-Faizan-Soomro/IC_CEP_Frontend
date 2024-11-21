@@ -18,18 +18,29 @@ function Item({ item, todos, setTodos }) {
   const [editing, setEditing] = React.useState(false);
   const inputRef = React.useRef(null);
 
-  const completeTodo = () => {
+  const completeTodo = async () => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
-        todo.id === item.id
-          ? { ...todo, is_completed: !todo.is_completed }
-          : todo
+        todo._id === item._id ? { ...todo, completed: !todo.completed } : todo
       )
     );
 
+    const url = `http://127.0.0.1:5000/update-task/${item._id}`;
+
+    await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: item.name,
+        completed: !item.completed,
+      }),
+    });
+
     // Update localStorage after marking todo as completed
-    const updatedTodos = JSON.stringify(todos);
-    localStorage.setItem("todos", updatedTodos);
+    // const updatedTodos = JSON.stringify(todos);
+    // localStorage.setItem("todos", updatedTodos);
   };
 
   const handleEdit = () => {
@@ -48,54 +59,70 @@ function Item({ item, todos, setTodos }) {
     }
   }, [editing]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
-        todo.id === item.id ? { ...todo, title: e.target.value } : todo
+        todo._id === item._id ? { ...todo, name: e.target.value } : todo
       )
     );
   };
 
-  const handleInpuSubmit = (event) => {
+  const handleInputSubmit = async (event) => {
     event.preventDefault();
 
-    // Update localStorage after editing todo
-    const updatedTodos = JSON.stringify(todos);
-    localStorage.setItem("todos", updatedTodos);
+    const url = `http://127.0.0.1:5000/update-task/${item._id}`;
+
+    await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: item.name,
+        completed: item.completed,
+      }),
+    });
 
     setEditing(false);
   };
 
-  const handleInputBlur = () => {
-    // Update localStorage after editing todo
-    const updatedTodos = JSON.stringify(todos);
-    localStorage.setItem("todos", updatedTodos);
+  // const handleInputBlur = () => {
+  // Update localStorage after editing todo
+  // const updatedTodos = JSON.stringify(todos);
+  // localStorage.setItem("todos", updatedTodos);
 
-    setEditing(false);
-  };
+  // console.log("item from blur-submit", item);
 
-  const handleDelete = () => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== item.id));
+  // setEditing(false);
+  // };
+
+  const handleDelete = async () => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== item._id));
 
     // Update localStorage after deleting todo
-    const updatedTodos = JSON.stringify(
-      todos.filter((todo) => todo.id !== item.id)
-    );
-    localStorage.setItem("todos", updatedTodos);
+    // const updatedTodos = JSON.stringify(
+    //   todos.filter((todo) => todo._id !== item._id)
+    // );
+    const url = `http://127.0.0.1:5000/delete-task/${item._id}`;
+
+    await fetch(url, {
+      method: "DELETE",
+    });
+    // localStorage.setItem("todos", updatedTodos);
   };
 
   return (
-    <li id={item?.id} className="todo_item">
+    <li id={item?._id} className="todo_item">
       {editing ? (
-        <form className="edit-form" onSubmit={handleInpuSubmit}>
-          <label htmlFor="edit-todo">
+        <form className="edit-form" onSubmit={handleInputSubmit}>
+          <label htmlFor="editTodo">
             <input
               ref={inputRef}
               type="text"
-              name="edit-todo"
-              id="edit-todo"
-              defaultValue={item?.title}
-              onBlur={handleInputBlur}
+              name="editTodo"
+              id="editTodo"
+              defaultValue={item?.name}
+              onBlur={handleInputSubmit}
               onChange={handleInputChange}
             />
           </label>
@@ -113,16 +140,12 @@ function Item({ item, todos, setTodos }) {
               width={34}
               height={34}
               stroke="#22C55E"
-              fill={item.is_completed ? "#22C55E" : "#0d0d0d"}
+              fill={item.completed ? "#22C55E" : "#0d0d0d"}
             >
               <circle cx="11.998" cy="11.998" fillRule="nonzero" r="9.998" />
             </svg>
-            <p
-              style={
-                item.is_completed ? { textDecoration: "line-through" } : {}
-              }
-            >
-              {item?.title}
+            <p style={item.completed ? { textDecoration: "line-through" } : {}}>
+              {item?.name}
             </p>
           </button>
           <div className="todo_items_right">

@@ -9,16 +9,29 @@ import TODOList from "@/components/TODOList";
 function Home() {
   const [todos, setTodos] = React.useState([]);
 
-  // Retrieve data from localStorage when component mounts
+  // get data from backend
   React.useEffect(() => {
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
+    async function getData() {
+      const url = "http://127.0.0.1:5000/";
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+        });
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const storedTodos = await response.json();
+        setTodos(storedTodos.task)
+      } catch (error) {
+        console.error(error.message);
+      }
     }
-  }, []);
+    getData();
+  },[]);
 
   const todos_completed = todos.filter(
-    (todo) => todo.is_completed == true
+    (todo) => todo.completed == true
   ).length;
   const total_todos = todos.length;
   return (
@@ -27,6 +40,8 @@ function Home() {
       <TODOHero todos_completed={todos_completed} total_todos={total_todos} />
       <Form todos={todos} setTodos={setTodos} />
       <TODOList todos={todos} setTodos={setTodos} />
+      <h1>Made By: Muhammad Faizan Soomro</h1>
+      <h2>Roll No: CS-21090</h2>
     </div>
   );
 }

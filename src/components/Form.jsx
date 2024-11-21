@@ -1,20 +1,29 @@
 function Form({ todos, setTodos }) {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const value = event.target.todo.value;
-    const newTodo = {
-      title: value,
-      id: self.crypto.randomUUID(),
-      is_completed: false,
-    };
+
+    const url = "http://127.0.0.1:5000/new-task";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: value }),
+    });
+
+    const newTodo = await response.json();
 
     // Update todo state
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
+    if (response.ok) {
+      setTodos((prevTodos) => [...prevTodos, newTodo.task]);
+    }
 
     // Store updated todo list in local storage
-    const updatedTodoList = JSON.stringify([...todos, newTodo]);
-    localStorage.setItem("todos", updatedTodoList);
+    // const updatedTodoList = JSON.stringify([...todos, newTodo]);
+    // localStorage.setItem("todos", updatedTodoList);
 
     event.target.reset();
   };
