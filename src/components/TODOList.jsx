@@ -25,7 +25,7 @@ function Item({ item, todos, setTodos }) {
       )
     );
 
-    const url = `http://127.0.0.1:5000/update-task/${item._id}`;
+    const url = `https://iccepbackend-production.up.railway.app/update-task/${item._id}`;
 
     await fetch(url, {
       method: "PUT",
@@ -70,7 +70,7 @@ function Item({ item, todos, setTodos }) {
   const handleInputSubmit = async (event) => {
     event.preventDefault();
 
-    const url = `http://127.0.0.1:5000/update-task/${item._id}`;
+    const url = `https://iccepbackend-production.up.railway.app/update-task/${item._id}`;
 
     await fetch(url, {
       method: "PUT",
@@ -103,7 +103,7 @@ function Item({ item, todos, setTodos }) {
     // const updatedTodos = JSON.stringify(
     //   todos.filter((todo) => todo._id !== item._id)
     // );
-    const url = `http://127.0.0.1:5000/delete-task/${item._id}`;
+    const url = `https://iccepbackend-production.up.railway.app/delete-task/${item._id}`;
 
     await fetch(url, {
       method: "DELETE",
