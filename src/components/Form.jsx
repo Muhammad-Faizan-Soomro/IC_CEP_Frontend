@@ -4,7 +4,7 @@ function Form({ todos, setTodos }) {
 
     const value = event.target.todo.value;
 
-    const url = "http://127.0.0.1:5000/new-task";
+    const url = "https://iccepbackend-production.up.railway.app/new-task";
 
     const response = await fetch(url, {
       method: "POST",
