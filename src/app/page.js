@@ -12,7 +12,7 @@ function Home() {
   // get data from backend
   React.useEffect(() => {
     async function getData() {
-      const url = "http://127.0.0.1:5000/";
+      const url = "https://iccepbackend-production.up.railway.app/";
       try {
         const response = await fetch(url, {
           method: "GET",
